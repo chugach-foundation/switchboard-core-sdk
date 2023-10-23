@@ -9,11 +9,11 @@ use std::sync::Arc;
 pub enum Error {
     // Generics
     Generic,
-
+    Message(&'static str),
     CustomMessage(String),
     CustomError {
         message: String,
-        source: Arc<dyn StdError + 'static>,
+        source: ParentError,
     },
     Unexpected,
     // Environment Errors
@@ -34,7 +34,8 @@ pub enum Error {
 
     // Docker/Container Errors
     DockerError,
-    ContainerStartError,
+    ContainerError(ParentError),
+    ContainerStartError(ParentError),
     ContainerCreateError,
     ContainerResultParseError,
     AttachError,
@@ -68,6 +69,13 @@ pub enum Error {
     EventListenerRoutineFailure,
     DecryptError,
     ParseError,
+    MrEnclaveMismatch,
+    FunctionResultIxIncorrectTargetChain,
+
+    // Solana
+    SolanaBlockhashError,
+    SolanaSignError(ParentError, String),
+    FunctionResultIxMissingDiscriminator,
 }
 
 impl fmt::Display for Error {
